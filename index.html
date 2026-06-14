@@ -1974,10 +1974,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         page_url: window.location.href
       };
 
-      console.log('[handleSubmit] fired, data:', data);
-
       try {
-        const res = await fetch('/.netlify/functions/send-lead', {
+        const res = await fetch('/api/send-lead', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
