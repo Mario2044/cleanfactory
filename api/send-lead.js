@@ -15,9 +15,9 @@ module.exports = async (req, res) => {
 
     const web3formsAccessKey = process.env.WEB3FORMS_ACCESS_KEY;
     const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
-    const telegramChatId = process.env.TELEGRAM_CHAT_ID;
+    const telegramChatId = process.env.TELEGRAM_GROUP_CHAT_ID || process.env.TELEGRAM_CHAT_ID;
 
-    if (!web3formsAccessKey || !telegramBotToken || !telegramChatId) {
+    if (!telegramBotToken || !telegramChatId) {
       return res.status(500).json({ success: false, message: 'Missing environment variables' });
     }
 
@@ -33,22 +33,9 @@ module.exports = async (req, res) => {
 🌐 Сторінка: ${pageUrl}
     `.trim();
 
-    const web3formsRequest = fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        access_key: web3formsAccessKey,
-        subject: 'Нова заявка — Clean Factory',
-        from_name: 'Clean Factory Website',
-        botcheck: '',
-        name, phone, service,
-        object_type: objectType,
-        comment,
-        page_url: pageUrl
-      })
-    });
+    console.log(`Sending to chat_id: ${telegramChatId}`);
 
-    const telegramRequest = fetch(
+    const telegramResponse = await fetch(
       `https://api.telegram.org/bot${telegramBotToken}/sendMessage`,
       {
         method: 'POST',
@@ -57,31 +44,24 @@ module.exports = async (req, res) => {
       }
     );
 
-    const [web3formsResponse, telegramResponse] = await Promise.all([web3formsRequest, telegramRequest]);
-
-    let web3formsOk = false;
-    try {
-      const web3formsResult = await web3formsResponse.json();
-      web3formsOk = web3formsResponse.ok && web3formsResult.success;
-      console.log('WEB3FORMS:', web3formsResponse.status, JSON.stringify(web3formsResult));
-    } catch (e) {
-      console.log('WEB3FORMS parse error:', web3formsResponse.status, e.message);
-    }
-
     let telegramOk = false;
     try {
       const telegramResult = await telegramResponse.json();
       telegramOk = telegramResponse.ok && telegramResult.ok;
-      console.log('TELEGRAM:', telegramResponse.status, JSON.stringify(telegramResult));
+      if (telegramOk) {
+        console.log(`TELEGRAM OK: message sent to ${telegramChatId}`);
+      } else {
+        console.log(`TELEGRAM FAIL: ${telegramResponse.status}`, JSON.stringify(telegramResult));
+      }
     } catch (e) {
-      console.log('TELEGRAM parse error:', telegramResponse.status, e.message);
+      console.log('TELEGRAM parse error:', e.message);
     }
 
-    if (!telegramOk && !web3formsOk) {
-      return res.status(500).json({ success: false, message: 'Lead was not sent' });
+    if (!telegramOk) {
+      return res.status(500).json({ success: false, message: 'Telegram send failed' });
     }
 
-    return res.status(200).json({ success: true, web3forms: web3formsOk, telegram: telegramOk });
+    return res.status(200).json({ success: true, telegram: true });
 
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
