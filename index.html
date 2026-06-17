@@ -1315,6 +1315,97 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .mobile-social-btn--tg  { background: #2AABEE; }
       .mobile-social-btn--wa  { background: #25D366; }
     }
+
+  /* ── Success popup ─────────────────────────────────────────── */
+  .success-popup {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-140%);
+    width: min(440px, calc(100vw - 32px));
+    background: linear-gradient(135deg, #EEF4FF 0%, #DBEAFE 100%);
+    border: 1px solid rgba(26,107,255,.3);
+    border-radius: 28px;
+    box-shadow: 0 8px 32px rgba(26,107,255,.18);
+    padding: 18px 20px 14px;
+    z-index: 9999;
+    opacity: 0;
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+  }
+  .success-popup.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  .success-popup__inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .success-popup__icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: #1A6BFF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .success-popup__body { flex: 1; }
+  .success-popup__title {
+    font-weight: 700;
+    font-size: 15px;
+    color: #0f172a;
+    margin: 0 0 3px;
+  }
+  .success-popup__subtitle {
+    font-size: 13px;
+    color: #475569;
+    margin: 0;
+  }
+  .success-popup__close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #64748b;
+    font-size: 22px;
+    line-height: 1;
+    padding: 0;
+    margin-top: -2px;
+    transition: color .2s;
+  }
+  .success-popup__close:hover { color: #0f172a; }
+  .success-popup__progress-track {
+    height: 3px;
+    background: rgba(26,107,255,.15);
+    border-radius: 99px;
+    margin-top: 14px;
+    overflow: hidden;
+  }
+  .success-popup__progress-bar {
+    height: 100%;
+    width: 100%;
+    background: #1A6BFF;
+    border-radius: 99px;
+    transform-origin: left;
+  }
+  /* ── Phone validation ───────────────────────────────────────── */
+  .phone-error {
+    font-size: 12px;
+    color: #ef4444;
+    margin: 4px 0 0;
+    display: none;
+  }
+  input.input-error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 4px rgba(239,68,68,.12) !important;
+  }
+
   </style>
 </head>
 <body>
@@ -1800,6 +1891,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="field">
                 <label for="phone">Телефон</label>
                 <input id="phone" name="phone" type="tel" autocomplete="tel" required placeholder="+380 (___) ___-__-__" />
+                <p class="phone-error" id="phoneError">Введіть коректний номер: +380XXXXXXXXX або 0XXXXXXXXX</p>
               </div>
               <div class="field full">
                 <label for="service">Послуга</label>
@@ -1951,20 +2043,62 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    var _popupTimer = null;
+    var _popupBtn = null;
+
+    function showSuccessPopup(btn) {
+      _popupBtn = btn;
+      var popup = document.getElementById('successPopup');
+      var bar = document.getElementById('popupProgressBar');
+      bar.style.transition = 'none';
+      bar.style.transform = 'scaleX(1)';
+      popup.classList.add('show');
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          bar.style.transition = 'transform 4s linear';
+          bar.style.transform = 'scaleX(0)';
+        });
+      });
+      _popupTimer = setTimeout(closeSuccessPopup, 4000);
+    }
+
+    function closeSuccessPopup() {
+      clearTimeout(_popupTimer);
+      var popup = document.getElementById('successPopup');
+      popup.classList.remove('show');
+      if (_popupBtn) {
+        _popupBtn.disabled = false;
+        _popupBtn.textContent = 'Отримати розрахунок';
+        _popupBtn = null;
+      }
+    }
+
+    document.getElementById('phone').addEventListener('input', function() {
+      this.classList.remove('input-error');
+      document.getElementById('phoneError').style.display = 'none';
+    });
+
     async function handleSubmit(event) {
       event.preventDefault();
 
       const form = event.target;
       const note = document.getElementById('formNote');
       const btn = form.querySelector('button[type="submit"]');
-      const originalText = btn.textContent;
+      const phoneInput = document.getElementById('phone');
+
+      const cleanPhone = phoneInput.value.trim().replace(/[\s\-()]/g, '');
+      if (!/^(\+?380|0)\d{9}$/.test(cleanPhone)) {
+        phoneInput.classList.add('input-error');
+        document.getElementById('phoneError').style.display = 'block';
+        phoneInput.focus();
+        return;
+      }
 
       btn.disabled = true;
       btn.textContent = 'Відправка...';
       note.textContent = '';
 
       const formData = new FormData(form);
-
       const data = {
         name: formData.get('name'),
         phone: formData.get('phone'),
@@ -1977,31 +2111,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       try {
         const res = await fetch('/api/send-lead', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
 
-        const json = await res.json();
+        let json = {};
+        try { json = await res.json(); } catch (_) {}
 
         if (res.ok && json.success) {
-          note.textContent = 'Дякуємо! Заявка прийнята — ми звʼяжемось з вами найближчим часом.';
-          note.style.color = '#22c55e';
-          console.log('Response:', json);
           form.reset();
+          showSuccessPopup(btn);
         } else {
           console.error('Send lead error:', json);
           note.textContent = 'Помилка відправки. Спробуйте ще раз або зателефонуйте нам.';
           note.style.color = '#ef4444';
+          btn.disabled = false;
+          btn.textContent = 'Отримати розрахунок';
         }
       } catch (e) {
         console.error('Network error:', e);
         note.textContent = 'Помилка мережі. Перевірте зʼєднання та спробуйте ще раз.';
         note.style.color = '#ef4444';
-      } finally {
         btn.disabled = false;
-        btn.textContent = originalText;
+        btn.textContent = 'Отримати розрахунок';
       }
     }
 
@@ -2066,6 +2198,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   });
 
   </script>
+
+  <div class="success-popup" id="successPopup" role="alert" aria-live="polite">
+    <div class="success-popup__inner">
+      <div class="success-popup__icon">✓</div>
+      <div class="success-popup__body">
+        <p class="success-popup__title">Заявку прийнято!</p>
+        <p class="success-popup__subtitle">Ми звʼяжемось з вами найближчим часом.</p>
+      </div>
+      <button class="success-popup__close" onclick="closeSuccessPopup()" aria-label="Закрити">×</button>
+    </div>
+    <div class="success-popup__progress-track">
+      <div class="success-popup__progress-bar" id="popupProgressBar"></div>
+    </div>
+  </div>
 
   <div class="mobile-social-bar" aria-label="Зв'язатись">
     <a href="https://t.me/cleanfactoryukraine" class="mobile-social-btn mobile-social-btn--tg" target="_blank" rel="noopener" aria-label="Telegram">
