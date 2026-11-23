@@ -1407,6 +1407,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   </style>
+  <link rel="stylesheet" href="/assets/css/nav.css" />
+  <link rel="canonical" href="https://www.cleanfactory.com.ua/" />
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -1452,7 +1454,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <nav class="nav-links" aria-label="Основна навігація">
       <button class="nav-close" aria-label="Закрити меню">&#x2715;</button>
       <a href="#about">Про нас</a>
-      <a href="#services">Послуги</a>
+      <div class="nav-dd">
+        <a href="#services">Послуги</a>
+        <button class="nav-dd-toggle" type="button" aria-expanded="false" aria-controls="nav-services-menu" aria-label="Показати список послуг"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="nav-dd-menu" id="nav-services-menu">
+          <ul class="nav-dd-menu-inner">
+            <li><a href="#service-general">Генеральне прибирання під ключ</a></li>
+            <li><a href="#service-windows">Миття вікон та фасадів</a></li>
+            <li><a href="#service-postbuild-home">Післябудівельне прибирання квартир та будинків</a></li>
+            <li><a href="#service-postbuild-commercial">Післябудівельне прибирання комерційних об'єктів</a></li>
+            <li><a href="/khimchystka-mebliv-i-kylymiv/" class="is-page">Хімчистка меблів та підлогових покриттів</a></li>
+            <li><a href="#service-basic">Базове прибирання</a></li>
+          </ul>
+        </div>
+      </div>
+      <a href="/prices/">Ціни</a>
       <a href="#benefits">Переваги</a>
       <a href="#process">Процес</a>
       <a href="#reviews">Відгуки</a>
@@ -1522,7 +1538,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
         <div class="services-grid">
-          <article class="service-card reveal">
+          <article class="service-card reveal" id="service-general">
             <img src="gallery-1.jpg" alt="Генеральне прибирання під ключ" />
             <div class="service-body">
               <span class="service-index"></span>
@@ -1531,7 +1547,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="service-bottom"><span class="price">від 100 грн/м²</span><a href="#request" class="btn btn-primary">Замовити послугу</a></div>
             </div>
           </article>
-          <article class="service-card reveal">
+          <article class="service-card reveal" id="service-windows">
             <img src="gallery-3.jpg" alt="Миття вікон та фасадів" />
             <div class="service-body">
               <span class="service-index"></span>
@@ -1540,7 +1556,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="service-bottom"><span class="price">від 80 грн/м²</span><a href="#request" class="btn btn-primary">Замовити послугу</a></div>
             </div>
           </article>
-          <article class="service-card reveal">
+          <article class="service-card reveal" id="service-postbuild-home">
             <img src="gallery-5.jpg" alt="Післябудівельне прибирання квартир та будинків" />
             <div class="service-body">
               <span class="service-index"></span>
@@ -1549,7 +1565,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="service-bottom"><span class="price">від 100 грн/м²</span><a href="#request" class="btn btn-primary">Замовити послугу</a></div>
             </div>
           </article>
-          <article class="service-card reveal">
+          <article class="service-card reveal" id="service-postbuild-commercial">
             <img src="gallery-6.jpg" alt="Післябудівельне прибирання комерційних об'єктів" />
             <div class="service-body">
               <span class="service-index"></span>
@@ -1558,16 +1574,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="service-bottom"><span class="price">від 80 грн/м²</span><a href="#request" class="btn btn-primary">Замовити послугу</a></div>
             </div>
           </article>
-          <article class="service-card reveal">
-            <img src="gallery-4.jpg" alt="Хімчистка меблів та підлогових покриттів" />
+          <article class="service-card reveal" id="service-khimchystka">
+            <a href="/khimchystka-mebliv-i-kylymiv/" tabindex="-1" aria-hidden="true"><img src="gallery-4.jpg" alt="Хімчистка меблів та підлогових покриттів" /></a>
             <div class="service-body">
               <span class="service-index"></span>
-              <h3>Хімчистка меблів та підлогових покриттів</h3>
+              <h3><a href="/khimchystka-mebliv-i-kylymiv/" class="service-title-link">Хімчистка меблів та підлогових покриттів</a></h3>
               <p>Дивани, крісла, офісні меблі, стільці та мʼякі зони. Килими, ковролін і текстильні покриття. Акуратно прибираємо плями, запахи й пил.</p>
-              <div class="service-bottom"><span class="price">від 120 грн/м</span><a href="#request" class="btn btn-primary">Замовити послугу</a></div>
+              <div class="service-bottom"><span class="price">від 120 грн/м²</span><a href="/khimchystka-mebliv-i-kylymiv/#request" class="btn btn-primary">Замовити послугу</a></div>
             </div>
           </article>
-          <article class="service-card reveal">
+          <article class="service-card reveal" id="service-basic">
             <img src="gallery-2.jpg" alt="Базове прибирання" />
             <div class="service-body">
               <span class="service-index"></span>
@@ -1960,10 +1976,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="footer-col-title">Послуги</div>
           <ul>
             <li><a href="#services">Післябудівельне прибирання</a></li>
-            <li><a href="#services">Хімчистка меблів і покриттів</a></li>
+            <li><a href="/khimchystka-mebliv-i-kylymiv/">Хімчистка меблів і покриттів</a></li>
             <li><a href="#services">Миття вікон і фасадів</a></li>
             <li><a href="#services">Генеральне прибирання під ключ</a></li>
             <li><a href="#services">Прибирання офісів</a></li>
+            <li><a href="/prices/">Ціни</a></li>
           </ul>
         </div>
 
@@ -2221,5 +2238,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
     </a>
   </div>
+  <script src="/assets/js/nav.js" defer></script>
 </body>
 </html>
